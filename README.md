@@ -1,1 +1,0 @@
-# TJGO_Analise
