@@ -10,6 +10,24 @@ def index():
     ano_selecionado = int(request.form.get('ano') or analisador.obter_anos()[0])
     
     tabela = analisador.gerar_analise(comarca_selecionada, ano_selecionado)
+
+    # Agrupa os dados por área de ação e calcula as estatísticas
+    tabela = tabela.rename(
+        columns={
+            "nome_area_acao": "Área de Ação",
+            "nome_assunto": "Assunto"
+        }
+    )
+
+    tabela = tabela[
+        ["Área de Ação",
+         "Assunto",
+         "Distribuídos",
+         "Baixados",
+         "Pendentes",
+         "Taxa de Congestionamento (%)"
+        ]
+    ]
     
     return render_template('index.html',
                          tabela=tabela.to_html(classes='table table-striped', index=False),

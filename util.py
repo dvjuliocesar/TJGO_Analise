@@ -27,6 +27,9 @@ class ProcessosAnalisador:
             Pendentes=('data_baixa', lambda x: x.isna().sum())
         ).reset_index()
         
+        analise['Taxa de Congestionamento (%)'] = (
+            (analise['Pendentes'] / (analise['Pendentes'] + analise['Baixados'])) * 100
+        ).round(2)
         # Adicionar totais
         totais = {
             'nome_area_acao': 'TOTAL',
@@ -35,5 +38,13 @@ class ProcessosAnalisador:
             'Baixados': analise['Baixados'].sum(),
             'Pendentes': analise['Pendentes'].sum()
         }
+        if (totais['Pendentes'] + totais['Baixados']) > 0:
+            totais['Taxa de Congestionamento (%)'] = round(
+            (totais['Pendentes'] / (totais['Pendentes'] + totais['Baixados'])) * 100, 2
+            )
+        else:
+            totais['Taxa de Congestionamento (%)'] = 0.00
+
+        analise = pd.concat([analise, pd.DataFrame([totais])], ignore_index=True)
         
-        return pd.concat([analise, pd.DataFrame([totais])], ignore_index=True)
+        return analise
